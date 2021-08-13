@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# automatically add ssh keys to agent on first unlock
+# UserKnownHostsFile must be set because ssh ignores $HOME and tries to write to $realhome/.ssh/known_hosts
+ssh_options="-o AddKeysToAgent=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts"
+
+if grep -q sss_ssh_knownhostsproxy /etc/ssh/ssh_config; then
+  # ignore global SSH config because SSSD's known hosts config is not supported
+  # by the ssh-keys interface
+  ssh_options="$ssh_options -F $HOME/.ssh/config"
+fi
+
+ssh_command="$SNAP/usr/bin/ssh $ssh_options $@"
+
+if [ -n "$SSH_ASKPASS" ]; then
+  ssh_command="setsid $ssh_command"
+fi
+
+exec "$ssh_command"

@@ -1,0 +1,84 @@
+name: qtpass-gm
+version: 1.3.2
+summary: A locally managed and standards compliant UNIX password manager
+description: |
+      QtPass makes it easy to access your pass-stored passwords from the desktop.
+      It allows you to generate new passwords, sync with central git repository,
+      copy passwords to the clipboard and use multiple profiles.
+icon: gui/qtpass.svg
+confinement: classic
+base: core18
+grade: stable
+
+apps:
+  qtpass:
+    adapter: full
+    command: local/bin/qtpass
+    command-chain:
+      - set-up-gnupg
+    plugs:
+      - home
+      - network
+      - network-bind
+      - unity7
+      - x11
+      - wayland
+      - gpg-keys
+      - ssh-keys
+      - opengl
+      - password-manager-service
+    extensions: [kde-neon]
+   
+parts:
+  gnupg:
+    plugin: dump
+    source: local/gnupg
+    stage-packages: 
+      - gpg
+      - gpg-agent
+      - gpgconf
+      - pinentry-curses
+      - rsync
+  qtpass:
+    plugin: qmake
+    source-type: tar
+    source: http://github.com/IJHack/QtPass/archive/v1.3.2.tar.gz 
+    qt-version: qt5
+    build-packages:
+      - libpoppler-qt5-dev
+      - pkg-config
+      - qtbase5-dev
+      - libqt5svg5-dev
+      - zlib1g-dev
+      - libssl-dev
+      - qttools5-dev-tools
+    build-snaps:
+      - kde-frameworks-5-core18-sdk
+    build-environment:
+      - PATH: "/usr/lib/ccache:$PATH"
+    stage-packages:
+      - pass
+      - pwgen
+      - git
+      - zlib1g
+      - libglu1-mesa
+
+layout:
+  /etc/gnupg:
+    bind: $SNAP/etc/gnupg
+  /usr/bin/dirmngr:
+    bind-file: $SNAP/usr/bin/dirmngr
+  /usr/bin/gpg:
+    bind-file: $SNAP/gpg
+  /usr/bin/gpg-agent:
+    bind-file: $SNAP/usr/bin/gpg-agent
+  /usr/bin/gpg-connect-agent:
+    bind-file: $SNAP/usr/bin/gpg-connect-agent
+  /usr/bin/gpgconf:
+    bind-file: $SNAP/usr/bin/gpgconf
+  /usr/bin/pinentry:
+    bind-file: $SNAP/usr/bin/pinentry-curses
+  /usr/lib/gnupg:
+    bind: $SNAP/usr/lib/gnupg
+  /usr/share/gnupg:
+    bind: $SNAP/usr/share/gnupg

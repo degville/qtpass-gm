@@ -1,0 +1,10 @@
+
+[Desktop Entry]
+Name=QtPass	
+GenericName=Password Manager
+Exec=qtpass
+Icon=${SNAP}/meta/gui/qtpass.png
+Type=Application
+StartupNotify=false
+Terminal=false
+Categories=Security;Utility;
